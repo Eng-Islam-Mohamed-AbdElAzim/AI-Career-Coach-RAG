@@ -1,6 +1,6 @@
+import streamlit as st
 import pandas as pd
 import numpy as np
-import faiss
 import json
 
 from pypdf import PdfReader
@@ -39,6 +39,11 @@ def read_resume(pdf_path):
 
     return text
 
+
+def extract_pdf(uploaded_file):
+    return read_resume(uploaded_file)
+
+
 def ask_llm(prompt):
 
     messages = [
@@ -73,6 +78,9 @@ def search_faiss(question,
                  index,
                  chunks,
                  k=5):
+
+    if embedding_model is None or index is None or not chunks:
+        return []
 
     question_embedding = embedding_model.encode(
         [question],
@@ -144,8 +152,9 @@ if uploaded_file:
 
         retrieved_documents = search_faiss(
             query,
-            index,
-            chunks
+            None,
+            None,
+            []
         )
 
 
